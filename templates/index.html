@@ -1,0 +1,99 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Calculator - Home</title>
+</head>
+<body>
+    <style>
+        * {
+            font-family: Verdana;
+        }
+
+        #bouton-menu {
+            width: 50px;
+            border: solid 2px black;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        #bouton-menu-child {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            left: 10px;
+            top: 7.5px;
+        }
+
+        .small-line {
+            height: 5px;
+            width: 30px;
+            background-color: black;
+            margin-bottom: 8px;
+        }
+
+        header {
+            display: flex;
+            flex-direction: row;
+
+        }
+
+        header h1 {
+            position: relative;
+            left: 40%
+        }
+
+        #mini-profile {
+            position: relative;
+            left: 70%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #profile-image {
+            border: solid 1px black;
+            border-radius: 50%;
+            background-image: url(http://127.0.0.1:5000/static/{{ idimage }}.jpg);
+            width: 100px;
+            height: 100px;
+            background-size: contain;
+        }
+
+        #profile-name {
+            text-align: center;
+        }
+
+        #menu {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            top: 70px;
+        }
+    </style>
+
+    <header>
+        <div id="bouton-menu">
+            <div id="bouton-menu-child">
+                <div class="small-line"></div>
+                <div class="small-line"></div>
+                <div class="small-line"></div>
+            </div>
+        </div>
+
+        <h1>Calculator</h1>
+
+        <div id="mini-profile">
+            <div id="profile-image"></div>
+            <span id="profile-name"> {{ name }} </span>
+        </div>
+
+        <div id="menu">
+            <a href="/">Home</a>
+            <a href="/profile">Profile</a>
+        </div>
+    </header>
+
+</body>
+</html>
