@@ -7,6 +7,9 @@ from flask.cli import with_appcontext
 import random
 
 
+app = Flask(__name__)
+
+
 @app.route("/")
 # temporaire, à changer une fois qu'on a la bdd
 def index():
@@ -14,7 +17,7 @@ def index():
 
 
 @app.route("/random")
-# loads a page about a random mathematician 
+# loads a page about a random mathematician
 def rand_math():
     rand_mathematician = mathematicians(random.randint(0, len(mathematicians)))
     return "en cours"
