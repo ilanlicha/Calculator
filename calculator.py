@@ -19,7 +19,7 @@ def index():
 @app.route("/random")
 # loads a page about a random mathematician
 def rand_math():
-    rand_mathematician = mathematicians(random.randint(0, len(mathematicians)))
+    rand_mathematician = mathematicians[random.randint(0, len(mathematicians))]
     return "en cours"
 
 
