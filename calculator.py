@@ -1,27 +1,69 @@
+import sqlite3
+import random
+import os
+import click
+import hashlib
+
 from flask import Flask
 from flask import render_template
-from markupsafe import escape
-import sqlite3
 from flask import current_app, g
+from flask import session
+from flask import request
 from flask.cli import with_appcontext
-import random
+from flask.helpers import flash, url_for
 
+from markupsafe import escape
+
+from sqlite3.dbapi2 import Cursor
+
+from werkzeug.utils import redirect
 
 app = Flask(__name__)
+app.secret_key = b'iaqi2021'
 
+def get_db():
+    if 'db' not in g:
+        try:
+            os.mkdir('instance')
+        except:
+            print('file already exists')
+        g.db = sqlite3.connect(
+            os.path.join(app.instance_path, 'flaskr.sqlite'),
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
+        g.db.row_factory = sqlite3.Row
 
-@app.route("/")
+    return g.db
+
+def init_db():
+    db = get_db()
+
+    with current_app.open_resource('BD.sql') as f:
+        db.executescript(f.read().decode('utf8'))
+
+@click.command('init-db')
+@with_appcontext
+def init_db_command():
+    """Clear the existing data and create new tables."""
+    init_db()
+    click.echo('Initialized the database.')
+
+app.cli.add_command(init_db_command)
+
+@app.route("/",methods=['GET','POST'])
 # temporaire, à changer une fois qu'on a la bdd
 def index():
-    return render_template("index.html", name="Test name", idimage=1)
-
+    if request.method == 'POST':
+        logout()
+    if 'name' in session:
+        return render_template('index.html', idimage=1)
+    return redirect(url_for('login'))
 
 @app.route("/random")
 # loads a page about a random mathematician
 def rand_math():
     rand_mathematician = mathematicians[random.randint(0, len(mathematicians))]
     return "en cours"
-
 
 class Mathematician:
     # all strings : name, description, born (year), died (year or period/century if the year is unknown),
@@ -32,7 +74,6 @@ class Mathematician:
         self.born = b
         self.died = di
         self.contributions = c
-
 
 euclid = Mathematician("Euclid", 'Euclid, sometimes called Euclid of Alexandria to distinguish him from Euclid of '
                                  'Megara, was a Greek mathematician, often referred to as the "founder of geometry" '
@@ -67,3 +108,48 @@ pythagoras = Mathematician("Pythagoras", "Pythagoras of Samos was an ancient Ion
 
 
 mathematicians = (euclid, pythagoras)
+
+""" Authentication """
+@app.route("/login",methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        if not request.form['name'] or not request.form['password']:
+            flash("Please fill all the fields")
+            return redirect(url_for('login'))
+        else:
+            name = request.form['name']
+            password = hashlib.sha256(request.form['password'].encode("utf-8")).hexdigest()
+            sql = get_db().cursor().execute("SELECT * FROM user WHERE name=? and password=?", (name, password))
+            found = sql.fetchone()
+            if found:
+                session['name'] = request.form['name']
+                return redirect(url_for('index'))
+            else:
+                flash(f"Account doesn't exists")
+                return redirect(url_for('login'))
+    return render_template('login.html')
+
+@app.route("/register",methods=['GET','POST'])
+def register():
+    if request.method == 'POST':
+        if not request.form['name'] or not request.form['password'] or not request.form['confirm']:
+            flash("Please fill all the fields")
+            return redirect(url_for('register'))
+        else:
+            if not request.form['password'] == request.form['confirm']:
+               flash("Passwords not corresponding")
+            else:
+                name = request.form['name']
+                password = hashlib.sha256(request.form['password'].encode("utf-8")).hexdigest()
+                quote = request.form['quote']
+                get_db().execute(f"INSERT INTO user(name,password,quote) values(\"{name}\",\"{password}\",\"{quote}\")")
+                get_db().commit()
+                flash("Compte crée")
+            return redirect(url_for('register'))
+    return render_template('register.html')
+
+@app.route("/logout",methods=['GET','POST'])
+def logout():
+    session.pop('name', None)
+    session.pop('password', None)
+    return redirect(url_for('index'))
