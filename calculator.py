@@ -132,20 +132,27 @@ def login():
 @app.route("/register",methods=['GET','POST'])
 def register():
     if request.method == 'POST':
-        if not request.form['name'] or not request.form['password'] or not request.form['confirm']:
+        name = request.form['name']
+        password = request.form['password']
+        confirm = request.form['confirm']
+        if not name or not password or not confirm:
             flash("Please fill all the fields")
-            return redirect(url_for('register'))
         else:
-            if not request.form['password'] == request.form['confirm']:
-               flash("Passwords not corresponding")
+            sql = get_db().cursor().execute("SELECT * FROM user WHERE name=?", name)
+            found = sql.fetchone()
+            if found:
+                flash("User already exists")
             else:
-                name = request.form['name']
-                password = hashlib.sha256(request.form['password'].encode("utf-8")).hexdigest()
-                quote = request.form['quote']
-                get_db().execute(f"INSERT INTO user(name,password,quote) values(\"{name}\",\"{password}\",\"{quote}\")")
-                get_db().commit()
-                flash("Compte crée")
-            return redirect(url_for('register'))
+                if not request.form['password'] == request.form['confirm']:
+                    flash("Passwords not corresponding")
+                else:
+                    password = hashlib.sha256(request.form['password'].encode("utf-8")).hexdigest()
+                    quote = request.form['quote']
+                    get_db().execute(f"INSERT INTO user(name,password,quote) values(\"{name}\",\"{password}\",\"{quote}\")")
+                    get_db().commit()
+                    flash("Account created")
+                    return redirect(url_for('login'))
+        return redirect(url_for('register'))
     return render_template('register.html')
 
 @app.route("/logout",methods=['GET','POST'])
