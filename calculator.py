@@ -1,28 +1,32 @@
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template, current_app, g, Markup
 from markupsafe import escape
 import sqlite3
-from flask import current_app, g
 from flask.cli import with_appcontext
 import random
+import math
 
 
 app = Flask(__name__)
 
-
+# utiliser eval
 @app.route("/")
 # temporaire, à changer une fois qu'on a la bdd
 def index():
-    return render_template("index.html", name="Test name", idimage=1)
+    return render_template("index.html", name="Test name", idimage=1, page_title="Calculator - Home",
+                           op_lists=Markup(make_lists(all_OP_lists)))
 
 
 @app.route("/random")
 # loads a page about a random mathematician
 def rand_math():
-    rand_mathematician = mathematicians[random.randint(0, len(mathematicians))]
-    return "en cours"
+    rand_mathematician = mathematicians[random.randint(0, len(mathematicians)-1)]
+    return render_template("mathematician.html", rand_math_name=rand_mathematician.name,
+                           description=rand_mathematician.description, born=rand_mathematician.born,
+                           died=rand_mathematician.died, contributions=rand_mathematician.contributions,
+                           page_title="Calculator - "+rand_mathematician.name)
 
 
+# used for the page /random
 class Mathematician:
     # all strings : name, description, born (year), died (year or period/century if the year is unknown),
     # contributions to mathematics
@@ -32,6 +36,39 @@ class Mathematician:
         self.born = b
         self.died = di
         self.contributions = c
+
+
+# dictionary for the operations, used to make the conversion from the preferred displaying format of these operations to
+# the format the code will be able to process
+OP_dictionary = {"+": "+", "-": "-", "x": "*", "÷": "/", "cos": "cos", "sin": "sin", "tan": "tan"
+                 , "arccos": "acos", "arcsin": "asin", "arctan": "atan", "distance": "dist", "cosh": "cosh",
+                 "sinh": "sinh", "tanh": "tanh", "arccosh": "acosh", "arcsinh": "asinh", "arctanh": "atanh",
+                 "toDegrees": "degrees", "toRadians": "radians"}
+
+
+# lists of operations
+OP_arithmetic = ["Arithmetic", "+", "-", "x", "÷"]
+OP_trigonometric = ["Trigonometric", "cos", "sin", "tan", "arccos", "arcsin", "arctan", "distance"]
+OP_hyperbolic = ["Hyperbolic", "cosh", "sinh", "tanh", "arccosh", "arcsinh", "arctanh"]
+OP_conversions = ["Conversions", "toDegrees", "toRadians"]
+
+
+# dictionary with all the lists
+all_OP_lists = [OP_arithmetic, OP_trigonometric, OP_hyperbolic, OP_conversions]
+
+
+# function that makes the html from the list of operations
+def make_lists(op_lists):
+    list_code = ""
+    for sublist in op_lists:
+        list_code += '<h3>'+sublist[0]+'</h3>'
+        list_code += '<p><select name="'+sublist[0]+'">'
+        sublist.pop(0)
+        sublist.insert(0, "")
+        for element in sublist:
+            list_code += '<option class="operation_item">'+element+'</option>'
+        list_code += '</select></p>'
+    return list_code
 
 
 euclid = Mathematician("Euclid", 'Euclid, sometimes called Euclid of Alexandria to distinguish him from Euclid of '
