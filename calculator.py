@@ -153,9 +153,10 @@ def login():
             flash("Please fill all the fields")
             return redirect(url_for('login'))
         else:
+            db = get_db()
             name = request.form['name']
             password = hashlib.sha256(request.form['password'].encode("utf-8")).hexdigest()
-            sql = get_db().cursor().execute("SELECT * FROM user WHERE name=? and password=?", (name, password))
+            sql = db.cursor().execute("SELECT * FROM user WHERE name=(?) and password=(?)", (name, password))
             found = sql.fetchone()
             if found:
                 session['name'] = request.form['name']
@@ -168,13 +169,14 @@ def login():
 @app.route("/register",methods=['GET','POST'])
 def register():
     if request.method == 'POST':
+        db = get_db()
         name = request.form['name']
         password = request.form['password']
         confirm = request.form['confirm']
         if not name or not password or not confirm:
             flash("Please fill all the fields")
         else:
-            sql = get_db().cursor().execute("SELECT * FROM user WHERE name=?", name)
+            sql = db.cursor().execute("SELECT * FROM user WHERE name=(?)", [name])
             found = sql.fetchone()
             if found:
                 flash("User already exists")
@@ -184,8 +186,8 @@ def register():
                 else:
                     password = hashlib.sha256(request.form['password'].encode("utf-8")).hexdigest()
                     quote = request.form['quote']
-                    get_db().execute(f"INSERT INTO user(name,password,quote) values(\"{name}\",\"{password}\",\"{quote}\")")
-                    get_db().commit()
+                    db.execute(f"INSERT INTO user(name,password,quote) values(\"{name}\",\"{password}\",\"{quote}\")")
+                    db.commit()
                     flash("Account created")
                     return redirect(url_for('login'))
         return redirect(url_for('register'))
