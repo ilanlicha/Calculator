@@ -198,3 +198,18 @@ def logout():
     session.pop('name', None)
     session.pop('password', None)
     return redirect(url_for('index'))
+
+@app.route("/profil",methods=['POST','GET'])
+def profil():
+    db = get_db()
+    sql = db.cursor().execute("SELECT favorite_operation FROM user WHERE name=(?)", [session['name']])
+    operationFav = sql.fetchone()
+    sql = db.cursor().execute("SELECT op.formule, op.calcul, op.resultat FROM operation op"
+                +" INNER JOIN user us"
+                +" ON op.idUser = us.ID"
+                +" WHERE us.name = (?)"
+                ,[session['name']])
+    historiqueUser = sql.fetchall()
+    sql = db.cursor().execute("SELECT quote FROM user WHERE name=(?)", [session['name']])
+    quoteUser = sql.fetchone()
+    return render_template('profil.html',favorit=operationFav, historyUser=historiqueUser, quote=quoteUser)

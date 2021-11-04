@@ -1,2 +1,33 @@
-<!DOCTYPE html>
-<header>Profil</header>
+{% extends "template.html" %}
+{% block content %}
+<body>
+    <div>
+        <div class="Pseudo_name" style="display: flex;">
+            <div style="height: 8%; width: 8%; margin: auto; margin-right: 0%;">
+                <img class="picture" src="/static/picture.png" alt="img_pseudo" style=" width: 80%;" />
+            </div>
+            <div style="margin: auto; margin-left: 4%;">
+                <h1 style="font-style: italic;">{{session['name']}}</h1>
+            </div>
+        </div>
+        <div style="text-align: center; font-style: italic;">"{{quote[0]}}"</div>
+        <div style="text-align: center;">
+            <h2 style="font-style: oblique; background-color: aqua;">Opération préféré</h2>
+        </div>
+        <div style="text-align: center; font-family: 'Times New Roman', Times, serif;">{{favorit[0]}}</div>
+        <div>
+            <div style="text-align: center;">
+                <h2 style="font-style: oblique; background-color: aqua;">Historique de calcul</h2>
+            </div>
+            <div id="history" name="history"
+                style="width: 710px; height: 260px; overflow-y: scroll; margin: auto; box-shadow: 10px 5px 5px gray; text-align: center;">
+                <ul style="list-style-type: none;">
+                    {% for column in historyUser %}
+                    formule: {{ column[0] }}, calcul: {{ column[1] }}, resultat: {{ column[2] }}<br />
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
