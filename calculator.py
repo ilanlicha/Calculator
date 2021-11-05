@@ -122,7 +122,29 @@ def make_lists(op_lists):
         list_code += '</select></p>'
     return list_code
 
+# function used to determine how many times a substring is in a string
+def sub_in_string(substring, big_string, ):
+    count = 0
+    continue_bool = True
+    start = 0
+    while continue_bool:
+        a = big_string.find(substring, start)
+        if a == -1:
+            continue_bool = False
+        else:
+            count += 1
+            start = a + 1
+    return count
 
+# function used to determine what i the most used function in the user history, giving us his "favorite" one
+def favorite_function(data, dictionary):
+    increment_dictionary = {}
+    for key in dictionary:
+        increment_dictionary[key] = 0
+    for row in data:
+        for key in dictionary:
+            increment_dictionary.update({key: increment_dictionary[key] + sub_in_string(key, row[0])})
+    return max(increment_dictionary, key=increment_dictionary.get)
 euclid = Mathematician("Euclid", 'Euclid, sometimes called Euclid of Alexandria to distinguish him from Euclid of '
                                  'Megara, was a Greek mathematician, often referred to as the "founder of geometry" '
                                  'or the "father of geometry". He was active in Alexandria during the reign of Ptolemy'
