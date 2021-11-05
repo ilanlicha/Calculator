@@ -91,6 +91,13 @@ OP_trigonometric = ["Trigonometric", "cos", "sin", "tan", "arcos", "arcsin", "ar
 OP_hyperbolic = ["Hyperbolic", "cosh", "sinh", "tanh", "arcosh", "arcsinh", "arctanh"]
 OP_conversions = ["Conversions", "toDegrees", "toRadians"]
 
+function_dictionary = {
+                "cos": "math.cos", "sin": "math.sin", "tan": "math.tan",
+                 "accos": "math.acos", "arcsin": "math.asin", "arctan": "math.atan", "distance": "math.dist",
+                 "cosh": "math.cosh", "sinh": "math.sinh", "tanh": "math.tanh", "arccosh": "math.acosh",
+                 "arcsinh": "math.asinh", "arctanh": "math.atanh", "toDegrees": "math.degrees", "toRadians":
+                 "math.radians"
+}
 
 # list   with all the lists
 all_OP_lists = [OP_arithmetic, OP_trigonometric, OP_hyperbolic, OP_conversions]
@@ -138,13 +145,21 @@ def sub_in_string(substring, big_string, ):
 
 # function used to determine what i the most used function in the user history, giving us his "favorite" one
 def favorite_function(data, dictionary):
+    # data is the result of a database request (a list of lists),the formula needs to be the first one or change 6 lines below
+    # you must use the function dictionary for the function_dictionary
     increment_dictionary = {}
     for key in dictionary:
         increment_dictionary[key] = 0
-    for row in data:
+    if type(data) == str:
         for key in dictionary:
-            increment_dictionary.update({key: increment_dictionary[key] + sub_in_string(key, row[0])})
+            increment_dictionary.update({key: increment_dictionary[key] + sub_in_string(key, data)})
+    else:
+        for row in data:
+            for key in dictionary:
+                increment_dictionary.update({key: increment_dictionary[key] + sub_in_string(key, row[0])})
     return max(increment_dictionary, key=increment_dictionary.get)
+
+
 euclid = Mathematician("Euclid", 'Euclid, sometimes called Euclid of Alexandria to distinguish him from Euclid of '
                                  'Megara, was a Greek mathematician, often referred to as the "founder of geometry" '
                                  'or the "father of geometry". He was active in Alexandria during the reign of Ptolemy'
