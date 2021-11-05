@@ -78,23 +78,37 @@ class Mathematician:
         self.contributions = c
 
 
-# dictionary for the operations, used to make the conversion from the preferred displaying format of these operations to
-# the format the code will be able to process
-OP_dictionary = {"+": "+", "-": "-", "x": "*", "÷": "/", "cos": "cos", "sin": "sin", "tan": "tan"
-                 , "arccos": "acos", "arcsin": "asin", "arctan": "atan", "distance": "dist", "cosh": "cosh",
-                 "sinh": "sinh", "tanh": "tanh", "arccosh": "acosh", "arcsinh": "asinh", "arctanh": "atanh",
-                 "toDegrees": "degrees", "toRadians": "radians"}
+# dictionary used to dictate what can and what cannot be in a formula
+OP_dictionary = {"+": "+", "-": "-", "x": "*", "÷": "/", "cos": "math.cos", "sin": "math.sin", "tan": "math.tan",
+                 "accos": "math.acos", "arcsin": "math.asin", "arctan": "math.atan", "distance": "math.dist",
+                 "cosh": "math.cosh", "sinh": "math.sinh", "tanh": "math.tanh", "arccosh": "math.acosh",
+                 "arcsinh": "math.asinh", "arctanh": "math.atanh", "toDegrees": "math.degrees", "toRadians":
+                 "math.radians", "0": "0", "1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6",
+                 "7": "7", "8": "8", "9": "9", "(": "(", ")": ")", " ": " "}
 
 
-# lists of operations
+# lists of operations, the first item in the list is the category
 OP_arithmetic = ["Arithmetic", "+", "-", "x", "÷"]
-OP_trigonometric = ["Trigonometric", "cos", "sin", "tan", "arccos", "arcsin", "arctan", "distance"]
-OP_hyperbolic = ["Hyperbolic", "cosh", "sinh", "tanh", "arccosh", "arcsinh", "arctanh"]
+OP_trigonometric = ["Trigonometric", "cos", "sin", "tan", "arcos", "arcsin", "arctan", "distance"]
+OP_hyperbolic = ["Hyperbolic", "cosh", "sinh", "tanh", "arcosh", "arcsinh", "arctanh"]
 OP_conversions = ["Conversions", "toDegrees", "toRadians"]
 
 
-# dictionary with all the lists
+# list   with all the lists
 all_OP_lists = [OP_arithmetic, OP_trigonometric, OP_hyperbolic, OP_conversions]
+
+
+def parse_formula(formula, dictionary):
+    # test for unwanted functions in the formula to prevent harmful code from going through the eval
+    formula_test = formula
+    for key_dict in dictionary:
+        formula_test = formula_test.replace(key_dict, "")
+    if formula_test != "":
+        return "Error, there were unwanted elements in your formula"
+    for key_dict in dictionary:
+        if formula.find(key_dict) != -1:
+            formula = formula.replace(key_dict, dictionary[key_dict])
+    return eval(formula, globals())
 
 
 # function that makes the html from the list of operations
