@@ -20,54 +20,40 @@
         text-align: center;
     }
 
-    .number_keyboard_button:hover {
-        cursor: pointer;
+        .number_keyboard_button:hover {
+            cursor: pointer;
+        }
+
+        .number_keyboard_button:hover {
+            cursor: pointer;
     }
-</style>
-<form action="" method="post">
-    <p>
-    <p><label for="operation">Formula</label></p>
-    <textarea rows="5" cols="50" name="operation" id="operation"></textarea>
-    </p>
-    <p>
-        <input type="submit" value="Calculate">
-    </p>
-</form>
-<div id="result"></div>
-<div id="number_keyboard">
-    <div class="number_keyboard_row">
-        <div class="number_keyboard_button">1</div>
-        <div class="number_keyboard_button">2</div>
-        <div class="number_keyboard_button">3</div>
+    </style>
+    <form action="" method="post">
+        <p>
+            <p><label for="operation">Formula</label></p>
+            <textarea rows="5" cols="50" name="operation" id="operation"></textarea>
+        </p>
+        <p>
+            <input type="submit" value="Calculate">
+        </p>
+    </form>
+    <div id="result">
+        {{resultPost}}
     </div>
-    <div class="number_keyboard_row">
-        <div class="number_keyboard_button">4</div>
-        <div class="number_keyboard_button">5</div>
-        <div class="number_keyboard_button">6</div>
-    </div>
-    <div class="number_keyboard_row">
-        <div class="number_keyboard_button">7</div>
-        <div class="number_keyboard_button">8</div>
-        <div class="number_keyboard_button">9</div>
-    </div>
-    <div class="number_keyboard_row">
-        <div class="number_keyboard_button">0</div>
-    </div>
-</div>
-<div class="number_keyboard_row">
-    <div class="number_keyboard_button">4</div>
-    <div class="number_keyboard_button">5</div>
-    <div class="number_keyboard_button">6</div>
-</div>
-<div class="number_keyboard_row">
-    <div class="number_keyboard_button">7</div>
-    <div class="number_keyboard_button">8</div>
-    <div class="number_keyboard_button">9</div>
-</div>
-<div class="number_keyboard_row">
-    <div class="number_keyboard_button">0</div>
-</div>
-</div>
+    <div id="number_keyboard">
+        <div class="number_keyboard_row">
+            <div class="number_keyboard_button">1</div><div class="number_keyboard_button">2</div><div class="number_keyboard_button">3</div>
+        </div>
+        <div class="number_keyboard_row">
+            <div class="number_keyboard_button">4</div><div class="number_keyboard_button">5</div><div class="number_keyboard_button">6</div>
+        </div>
+        <div class="number_keyboard_row">
+            <div class="number_keyboard_button">7</div><div class="number_keyboard_button">8</div><div class="number_keyboard_button">9</div>
+        </div>
+        <div class="number_keyboard_row">
+            <div class="number_keyboard_button">0</div>
+        </div>
+    </div> 
 {{ op_lists }}
 <script>
     let textarea_operation = document.getElementById("operation")

@@ -52,7 +52,12 @@ app.cli.add_command(init_db_command)
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        operation = request.form["operation"]
+        db.get_db()
+        formula_post = request.form["operation"]
+        result = parse_formula(formula_post, function_dictionary)
+        # insert in the history database needed here
+        return render_template("index.html", idimage=1, page_title="Calculator - Home",
+                               op_lists=Markup(make_lists(all_OP_lists)), resultPost=result)
     if "name" in session:
         return render_template(
             "index.html",
@@ -160,7 +165,7 @@ all_OP_lists = [OP_arithmetic, OP_trigonometric, OP_hyperbolic, OP_conversions]
 
 
 def parse_formula(formula, dictionary):
-    # test for unwanted functions in the formula to prevent harmful code from going through the eval
+    # test for unwanted functions in th e formula to prevent harmful code from going through the eval
     formula_test = formula
     for key_dict in dictionary:
         formula_test = formula_test.replace(key_dict, "")
