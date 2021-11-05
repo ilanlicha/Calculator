@@ -52,7 +52,12 @@ app.cli.add_command(init_db_command)
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        operation = request.form["operation"]
+        db.get_db()
+        formulaPost = request.form["operation"]
+        result = parse_formula(formulaPost, function_dictionary)
+        # insert in the history database needed here
+        return render_template("index.html", idimage=1, page_title="Calculator - Home",
+                               op_lists=Markup(make_lists(all_OP_lists)), resultPost=result)
     if "name" in session:
         return render_template(
             "index.html",
