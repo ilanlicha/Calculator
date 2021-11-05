@@ -53,8 +53,8 @@ app.cli.add_command(init_db_command)
 def index():
     if request.method == "POST":
         db.get_db()
-        formulaPost = request.form["operation"]
-        result = parse_formula(formulaPost, function_dictionary)
+        formula_post = request.form["operation"]
+        result = parse_formula(formula_post, function_dictionary)
         # insert in the history database needed here
         return render_template("index.html", idimage=1, page_title="Calculator - Home",
                                op_lists=Markup(make_lists(all_OP_lists)), resultPost=result)
