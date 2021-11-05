@@ -1,0 +1,76 @@
+{% extends "template.html" %}
+
+    {% block content %}
+    
+    <div>
+        
+        
+        <form action="/converter" method="post">
+            <div>
+                <p>Choose the type of unit : </p>
+                <select id="list" name="list_fields" method="POST" action="/" onchange="run();">
+                    <option value= none></option>
+                    {% for item in list_convertibles.keys() %}
+                    <option value= "{{item}}">{{item}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <br><br>
+            
+            <div>
+                <label for="convert">To convert :</label>
+                <input type="text" id="convert" name='toConvert' value='{{toConv}}'>
+                <select id="ConvUnit" name="unitConv" class='unitSelec' method="POST" action="/"></select>  
+            </div>
+            <div>
+                <label for="result">Result :</label>
+                <input type="text" id="result" name='res' value='{{res}}'>
+                <select id="ResUnit" name="unitRes" class='unitSelec' method="POST" action="/"></select>
+            </div>
+            <div class="button">
+                <button type="submit">Convert</button>
+            </div>
+        </form>
+
+    </div>
+    
+    <script>
+        var selectedField;
+        function run(){
+            console.log( '{{list_convertibles}}' );
+            var selectedElement = document.getElementById("list"); 
+            selectedField = selectedElement.options[selectedElement.selectedIndex].text;
+
+            var selectUnitConv = document.querySelector('#ConvUnit');
+            var selectUnitRes = document.querySelector('#ResUnit');
+            for (let i = selectUnitConv.length; i >=0; i--) {
+                selectUnitConv.remove(i);
+                selectUnitRes.remove(i);
+            }
+            
+            var tabUnits = {{ list_convertibles|tojson }};
+            console.log(Object.keys(tabUnits[selectedField]));
+            console.log('{{ list_convertibles|tojson }}');
+
+            console.log(selectedField);
+            console.log(selectUnitConv.options);
+            
+            var tabLength = Object.keys(tabUnits[selectedField]).length;
+            for (let i = 0; i < tabLength; i++) {
+                var opt = document.createElement("option");
+                opt.value = Object.keys(tabUnits[selectedField])[i];
+                opt.text = Object.keys(tabUnits[selectedField])[i];
+                
+                selectUnitConv.add(opt);
+
+                var opt2 = document.createElement("option");
+                opt2.value = Object.keys(tabUnits[selectedField])[i];
+                opt2.text = Object.keys(tabUnits[selectedField])[i];
+                
+                selectUnitRes.add(opt2);
+            };
+        };
+        run();
+    </script>
+
+    {% endblock %}
