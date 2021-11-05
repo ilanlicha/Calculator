@@ -52,12 +52,24 @@ app.cli.add_command(init_db_command)
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        db.get_db()
+        db = get_db()
         formula_post = request.form["operation"]
-        result = parse_formula(formula_post, function_dictionary)
-        # insert in the history database needed here
-        return render_template("index.html", idimage=1, page_title="Calculator - Home",
-                               op_lists=Markup(make_lists(all_OP_lists)), resultPost=result)
+        result = parse_formula(formula_post, OP_dictionary)
+        sql = db.cursor().execute(
+            f'SELECT ID FROM user WHERE name = "{session["name"]}"'
+        )
+        idUser = sql.fetchone()[0]
+        db.execute(
+            f'INSERT INTO operation(formule,resultat,idUser) values("{formula_post}","{result}",{idUser})'
+        )
+        db.commit()
+        return render_template(
+            "index.html",
+            idimage=1,
+            page_title="Calculator - Home",
+            op_lists=Markup(make_lists(all_OP_lists)),
+            resultPost=result,
+        )
     if "name" in session:
         return render_template(
             "index.html",
@@ -304,9 +316,18 @@ def logout():
 def profil():
     db = get_db()
     sql = db.cursor().execute(
-        "SELECT favorite_operation FROM user WHERE name=(?)", [session["name"]]
+        "SELECT op.formule, op.resultat FROM operation op"
+        + " INNER JOIN user us"
+        + " ON op.idUser = us.ID"
+        + " WHERE us.name = (?)",
+        [session["name"]],
     )
-    operationFav = sql.fetchone()
+    operationFav = sql.fetchall()
+    if not operationFav:
+        operationFav = "None"
+    else:
+        operationFav = favorite_function(operationFav, function_dictionary)
+
     sql = db.cursor().execute(
         "SELECT op.formule, op.resultat FROM operation op"
         + " INNER JOIN user us"
@@ -322,3 +343,46 @@ def profil():
     return render_template(
         "profil.html", favorit=operationFav, historyUser=historiqueUser, quote=quoteUser
     )
+
+
+@app.route("/aboutus")
+def aboutus():
+    return render_template("aboutus.html")
+
+
+@app.route("/converter", methods=["POST", "GET"])
+def converter():
+    resultat = None
+
+    volume = {"L": 0.001, "m3": 1, "cm3": 0.01, "mm3": 0.000001}
+    area = {"ha": 10000, "km2": 1000000, "m2": 1}
+    length = {
+        "km": 1000,
+        "m": 1,
+        "cm": 0.01,
+        "mm": 0.001,
+        "um": 0.000001,
+        "nm": 0.000000001,
+    }
+    mass = {"T": 1000000, "kg": 1000, "g": 1, "mg": 0.001}
+    list_convertible = {"Volume": volume, "Area": area, "Length": length, "Mass": mass}
+
+    if request.method == "POST":
+        if not (request.form["toConvert"]):
+            return render_template("converter.html", list_convertibles=list_convertible)
+        else:
+            tab = list_convertible[request.form["list_fields"]]
+            resultat = (
+                float(request.form["toConvert"])
+                * tab[request.form["unitConv"]]
+                / tab[request.form["unitRes"]]
+            )
+            return render_template(
+                "converter.html",
+                list_convertibles=list_convertible,
+                toConv=float(request.form["toConvert"]),
+                res=resultat,
+            )
+
+    else:
+        return render_template("converter.html", list_convertibles=list_convertible)

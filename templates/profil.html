@@ -15,7 +15,7 @@
         <div style="text-align: center;">
             <h2 style="font-style: oblique; background-color: aqua;">Favorite operation</h2>
         </div>
-        <div style="text-align: center; font-family: 'Times New Roman', Times, serif;">{{favorit[0]}}</div>
+        <div style="text-align: center; font-family: 'Times New Roman', Times, serif;">{{favorit}}</div>
         <div>
             <div style="text-align: center;">
                 <h2 style="font-style: oblique; background-color: aqua;">Calculation history</h2>
@@ -24,7 +24,7 @@
                 style="width: 710px; height: 260px; overflow-y: scroll; margin: auto; box-shadow: 10px 5px 5px gray; text-align: center;">
                 <ul style="list-style-type: none;">
                     {% for column in historyUser %}
-                    formula: {{ column[0] }}, calculation: {{ column[1] }}, result: {{ column[2] }}<br />
+                    formula: {{ column[0] }}, result: {{ column[1] }}<br />
                     {% endfor %}
                 </ul>
             </div>
