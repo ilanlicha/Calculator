@@ -1,13 +1,11 @@
 <html>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{page_title}}</title>
+    <title>Calculator - Home</title>
 </head>
-
 <body>
 
     <style>
@@ -37,7 +35,7 @@
             margin-bottom: 8px;
         }
 
-        header {
+        header, footer {
             display: flex;
             flex-direction: row;
 
@@ -74,6 +72,19 @@
             flex-direction: column;
             top: 70px;
         }
+
+        footer {
+            background:#ccc;
+            position:absolute;
+            bottom:0;
+            width:100%;
+            padding-top:10%px;
+            height:50px;
+        }
+
+        footer table{
+            padding-left: 40%;
+        }
     </style>
 
 
@@ -89,21 +100,26 @@
 
         <h1>Calculator</h1>
 
-        <div id="mini-profil">
+        <div id="mini-profile">
             <div id="profile-image"></div>
-            <span id="profile-name"> {{ session['name'] }} </span>
+            <span id="profile-name"> {{ name }} </span>
         </div>
 
         <div id="menu">
             <a href="/">Home</a>
             <a href="/profile">Profile</a>
-            <a href="/random">Random mathematician</a>
-            <a href="/logout">Log out</a>
         </div>
     </header>
 
     {% block content %}
     {% endblock %}
-</body>
+    </body>
 
+    <footer>
+        <table>
+            <td><a href="/">Home Page</a></td>
+            <td><a href="/profile">Profile</a></td>
+            <td><a href="/aboutus">About-us</a></td>
+        </table>
+    </footer>
 </html>
