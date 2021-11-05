@@ -1,28 +1,32 @@
 {% extends "template.html" %}
 
-    {% block content %}
-    <style>
-        #number_keyboard {
-            display: flex;
-            flex-direction: column;
-        }
+{% block content %}
+<style>
+    #number_keyboard {
+        display: flex;
+        flex-direction: column;
+    }
 
-        .number_keyboard_row {
-            display: flex;
-            flex-direction: row;
-        }
+    .number_keyboard_row {
+        display: flex;
+        flex-direction: row;
+    }
 
-        .number_keyboard_button {
-            border: solid 2px black;
-            width: 30px;
-            height: 30px;
-            margin: 5px;
-            text-align: center;
-        }
+    .number_keyboard_button {
+        border: solid 2px black;
+        width: 30px;
+        height: 30px;
+        margin: 5px;
+        text-align: center;
+    }
 
         .number_keyboard_button:hover {
             cursor: pointer;
         }
+
+        .number_keyboard_button:hover {
+            cursor: pointer;
+    }
     </style>
     <form action="" method="post">
         <p>
@@ -49,19 +53,49 @@
         <div class="number_keyboard_row">
             <div class="number_keyboard_button">0</div>
         </div>
+    </div> 
+<form action="" method="post">
+    <p>
+    <p><label for="operation">Formula</label></p>
+    <textarea rows="5" cols="50" name="operation" id="operation"></textarea>
+    </p>
+    <p>
+        <input type="submit" value="Calculate">
+    </p>
+</form>
+<div id="result"></div>
+<div id="number_keyboard">
+    <div class="number_keyboard_row">
+        <div class="number_keyboard_button">1</div>
+        <div class="number_keyboard_button">2</div>
+        <div class="number_keyboard_button">3</div>
     </div>
-    {{ op_lists }}
-    <script>
-        let textarea_operation = document.getElementById("operation")
-        let operation_items = document.getElementsByClassName("operation_item")
-        let keyboard_buttons = document.getElementsByClassName("number_keyboard_button")
+    <div class="number_keyboard_row">
+        <div class="number_keyboard_button">4</div>
+        <div class="number_keyboard_button">5</div>
+        <div class="number_keyboard_button">6</div>
+    </div>
+    <div class="number_keyboard_row">
+        <div class="number_keyboard_button">7</div>
+        <div class="number_keyboard_button">8</div>
+        <div class="number_keyboard_button">9</div>
+    </div>
+    <div class="number_keyboard_row">
+        <div class="number_keyboard_button">0</div>
+    </div>
+</div>
+{{ op_lists }}
+<script>
+    let textarea_operation = document.getElementById("operation")
+    let operation_items = document.getElementsByClassName("operation_item")
+    let keyboard_buttons = document.getElementsByClassName("number_keyboard_button")
 
-        for (let element of operation_items) {
-            element.addEventListener("click", function(){textarea_operation.value += element.value})
-        }
+    for (let element of operation_items) {
+        element.addEventListener("click", function () { textarea_operation.value += element.value })
+    }
 
-        for (let element of keyboard_buttons) {
-            element.addEventListener("click", function(){textarea_operation.value += element.innerHTML})
-        }
-    </script>
-    {% endblock %}
+    for (let element of keyboard_buttons) {
+        element.addEventListener("click", function () { textarea_operation.value += element.innerHTML })
+    }
+</script>
+{% endblock %}
