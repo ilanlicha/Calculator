@@ -165,7 +165,7 @@ all_OP_lists = [OP_arithmetic, OP_trigonometric, OP_hyperbolic, OP_conversions]
 
 
 def parse_formula(formula, dictionary):
-    # test for unwanted functions in the formula to prevent harmful code from going through the eval
+    # test for unwanted functions in th e formula to prevent harmful code from going through the eval
     formula_test = formula
     for key_dict in dictionary:
         formula_test = formula_test.replace(key_dict, "")
