@@ -48,8 +48,6 @@ app.cli.add_command(init_db_command)
 @app.route("/",methods=['GET','POST'])
 # temporaire, à changer une fois qu'on a la bdd
 def index():
-    if request.method == 'POST':
-        logout()
     if 'name' in session:
         return render_template("index.html", idimage=1, page_title="Calculator - Home",
                            op_lists=Markup(make_lists(all_OP_lists)))
@@ -116,11 +114,11 @@ def make_lists(op_lists):
     list_code = ""
     for sublist in op_lists:
         list_code += '<h3>'+sublist[0]+'</h3>'
-        list_code += '<p><select name="'+sublist[0]+'">'
+        list_code += '<p><select class="operation_item" name="'+sublist[0]+'">'
         sublist.pop(0)
         sublist.insert(0, "")
         for element in sublist:
-            list_code += '<option class="operation_item">'+element+'</option>'
+            list_code += '<option>'+element+'</option>'
         list_code += '</select></p>'
     return list_code
 
@@ -156,8 +154,57 @@ pythagoras = Mathematician("Pythagoras", "Pythagoras of Samos was an ancient Ion
                                                'were feminine, and that the number five represented marriage, '
                                                'because it was the sum of two and three. ')
 
+thales = Mathematician("Thales of Miletus", "Thales of Miletus was a Greek mathematician, astronomer and pre-Socratic "
+                                            "philosopher from Miletus in Ionia, Asia Minor. He was one of the Seven "
+                                            "Sages of Greece. Many, most notably Aristotle, regarded him as the first "
+                                            "philosopher in the Greek tradition, and he is otherwise historically "
+                                            "recognized as the first individual known to have entertained and engaged "
+                                            "in scientific philosophy. He is often referred to as the Father of "
+                                            "Science.", "626/623 BC", "548/545 BC", "Thales was known for his innovative "
+                                            "use of geometry. His understanding was theoretical as well as practical. For example, he said: "
+                                            "Megiston topos: apanta gar chorei (Μέγιστον τόπος· ἄπαντα γὰρ χωρεῖ.) The greatest is space, "
+                                            "for it holds all things. Topos is in Newtonian-style space, since the verb, chorei, has the "
+                                            "connotation of yielding before things, or spreading out to make room for them, which is "
+                                            "extension. Within this extension, things have a position. Points, lines, planes and solids "
+                                            "related by distances and angles follow from this presumption. Thales understood similar "
+                                            "triangles and right triangles, and what is more, used that knowledge in practical ways. "
+                                            "The story is told in Diogenes Laërtius (loc. cit.) that he measured the height of the "
+                                            "pyramids by their shadows at the moment when his own shadow was equal to his height. A "
+                                            "right triangle with two equal legs is a 45-degree right triangle, all of which are similar. "
+                                            "The length of the pyramid's shadow measured from the center of the pyramid at that moment "
+                                            "must have been equal to its height. This story indicates that he was familiar with the "
+                                            "Egyptian seked, or seqed, the ratio of the run to the rise of a slope (cotangent). The "
+                                            "seked is at the base of problems 56, 57, 58, 59 and 60 of the Rhind papyrus — an ancient "
+                                            "Egyptian mathematical document. More practically Thales used the same method to measure "
+                                            "the distances of ships at sea, said Eudemus as reported by Proclus ('in Euclidem'). "
+                                            "According to Kirk & Raven (reference cited below), all you need for this feat is three "
+                                            "straight sticks pinned at one end and knowledge of your altitude. One stick goes "
+                                            "vertically into the ground. A second is made level. With the third you sight the ship "
+                                            "and calculate the seked from the height of the stick and its distance from the point of "
+                                            "insertion to the line of sight (Proclus, In Euclidem, 352).")
 
-mathematicians = (euclid, pythagoras)
+alkhwarizmi = Mathematician("Al-Khwarizmi", "Muhammad Ibn Musa al-Khuwarizmi, généralement appelé Al-Khwarismi (latinisé en "
+                                            "Algoritmi ou Algorizmi), est un mathématicien, géographe, astrologue et astronome "
+                                            "persan, membre de la Maison de la sagesse de Bagdad. Ses écrits, rédigés en langue "
+                                            "arabe, puis traduits en latin à partir du XIIe siècle, ont permis l'introduction de "
+                                            "l'algèbre en Europe. Sa vie s'est déroulée en totalité à l'époque de la dynastie "
+                                            "abbasside.", "780", "850", "Al-Khwârismî est l'auteur de plusieurs ouvrages de "
+                                            "mathématiques. Le plus célèbre, intitulé Kitābu 'l-mukhtaṣar fī ḥisābi 'l-jabr "
+                                            "wa'l-muqābalah,  ou Abrégé du calcul par la restauration et la comparaison, "
+                                            "publié sous le règne d'Al-Ma’mūn (813-833), « est considéré comme le premier "
+                                            "manuel d'algèbre7 ». Ce livre contient six chapitres. Il ne contient aucun "
+                                            "chiffre. Toutes les équations sont exprimées avec des mots. Le carré de "
+                                            "l'inconnue est nommé « le carré » ou mâl, l'inconnue est « la chose » ou "
+                                            "shay (šay), la racine est le jidhr, la constante est le dirham ou adǎd. "
+                                            "Al-Khwârismî définit ainsi six équations canoniques auxquelles peuvent être "
+                                            "ramenés les problèmes concrets d'héritage, d'arpentage des terres, ou de "
+                                            "transactions commerciales. Par exemple, l'équation « des biens sont égaux aux "
+                                            "racines » équivaudrait de nos jours à une équation de la forme. Le terme "
+                                            "al-jabr est repris par les Européens et devient plus tard le mot algèbre.")
+
+
+mathematicians = (euclid, pythagoras, thales, alkhwarizmi)
+
 
 """ Authentication """
 @app.route("/login",methods=['GET','POST'])
@@ -219,7 +266,7 @@ def profil():
     sql = db.cursor().execute("SELECT favorite_operation FROM user WHERE name=(?)", [session['name']])
     operationFav = sql.fetchone()
     sql = db.cursor().execute("SELECT op.formule, op.calcul, op.resultat FROM operation op"
-                +" INNER JOIN user us"
+                + " INNER JOIN user us"
                 +" ON op.idUser = us.ID"
                 +" WHERE us.name = (?)"
                 ,[session['name']])
